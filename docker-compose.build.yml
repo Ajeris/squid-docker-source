@@ -1,0 +1,22 @@
+# Docker Compose file for building the image
+services:
+  squid:
+    image: squid-minimal:6.12
+    build:
+      context: .
+      dockerfile: Dockerfile
+      
+    container_name: squid-proxy-build
+    
+    restart: "no"  # Don't restart during build
+    
+    volumes:
+      - ./config:/etc/squid/config:ro
+      - ./config/squid.conf:/etc/squid/squid.conf:ro
+      - ./config/ssl_cert:/etc/squid/ssl_cert:ro
+      - ./logs:/var/log/squid
+      - ./cache:/var/cache/squid
+      
+    environment:
+      - TZ=Asia/Qyzylorda
+      - SQUID_CONFIG_FILE=/etc/squid/squid.conf

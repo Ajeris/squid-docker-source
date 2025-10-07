@@ -1,59 +1,83 @@
 services:
-  squid-proxy-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  squid:
+    image: squid-minimal:6.12
+    
     container_name: squid-proxy
-    ports:
-      - "8078:3128"
-      - "8077:3129"
+    
+    restart: unless-stopped
+    
+    # Macvlan provides direct network access for proper Active Directory authentication
+    # Squid accessible directly at 192.168.10.22:3128
+    
     volumes:
-      - ./config:/etc/squid
-      - ./cache:/var/spool/squid
+      # Configuration files
+      - ./config:/etc/squid/config:ro
+      - ./config/squid.conf:/etc/squid/squid.conf:ro
+      
+      # SSL certificates for HTTPS traffic decryption
+      - ./config/ssl_cert:/etc/squid/ssl_cert:ro
+      
+      # Logs (persistent, readable by external programs)
       - ./logs:/var/log/squid
+      
+      # Cache (persistent, readable by external programs) 
+      - ./cache:/var/cache/squid
+      
+      # Timezone data for Asia/Qyzylorda
+      - /etc/localtime:/etc/localtime:ro
+      
     environment:
       - TZ=Asia/Qyzylorda
-    restart: unless-stopped
+      - SQUID_CONFIG_FILE=/etc/squid/squid.conf
+      # Set NTP server for AD time synchronization (replace with your AD server)
+      # - NTP_SERVER=192.168.10.1  # Configure your AD server IP
+      
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    
+    # Health check to ensure Squid is running properly
+#    healthcheck:
+#      test: [
+#        "CMD-SHELL", 
+#        "pgrep squid || exit 1"
+#      ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 60s
+    
+    # Logging configuration with rotation (handles log rotation as per tech requirements)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Use macvlan for direct network access (required for AD authentication)
     networks:
-      - squid-net
-
-  apache-analyzer:
-    build:
-      context: .
-      dockerfile: apache/Dockerfile
-    container_name: squid-apache-analyzer
-    ports:
-      - "8076:80"
-    volumes:
-      # Логи squid для анализа
-      - ./logs:/var/log/squid:ro
-      # Конфигурация SquidAnalyzer
-      - ./config/squidanalyzer:/etc/squidanalyzer
-      # Исходные коды программ (для SqStat)
-      - ./soft:/opt/soft:ro
-      # Данные веб-сервера
-      - apache-webdata:/var/www/html
-      # Логи анализатора
-      - apache-logs:/var/log/apache2
-    environment:
-      - TZ=Asia/Qyzylorda
-    restart: unless-stopped
-    networks:
-      - squid-net
-    depends_on:
-      - squid-proxy-service
-    healthcheck:
-      test: ["CMD", "apache2ctl", "configtest"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-volumes:
-  apache-webdata:
-    driver: local
-  apache-logs:
-    driver: local
+      squid-macvlan:
+        ipv4_address: 192.168.10.22
 
 networks:
-  squid-net:
-    driver: bridge
+  squid-macvlan:
+    driver: macvlan
+    driver_opts:
+      parent: eth0  # Replace with your actual network interface
+    ipam:
+      config:
+        - subnet: 192.168.10.0/23
+          gateway: 192.168.10.1
+          ip_range: 192.168.10.22/32
+
+# Optional: Add volumes for persistent data
+volumes:
+  squid_logs:
+    driver: local
+  squid_cache:
+    driver: local

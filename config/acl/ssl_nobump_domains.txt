@@ -1,0 +1,31 @@
+# SSL No-Bump domains - bypass SSL interception
+# =============================================
+# Banks, government and critical services that should not be intercepted
+
+# Banking and finance
+.sberbank.ru
+.alfabank.ru
+.kaspi.kz
+.halykbank.kz
+.paypal.com
+.visa.com
+.mastercard.com
+
+# Government and official services
+.gov.kz
+.egov.kz
+.adilet.zan.kz
+.irs.gov
+.gov.uk
+.europa.eu
+
+# Security and authentication
+.login.microsoftonline.com
+.accounts.google.com
+.auth0.com
+.okta.com
+
+# Healthcare and sensitive services
+.who.int
+.nih.gov
+.healthgrades.com

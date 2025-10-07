@@ -1,0 +1,27 @@
+# Blocked domains blacklist
+# =========================
+
+# Social networks (blocked during work hours)
+.facebook.com
+.instagram.com
+.tiktok.com
+
+# Entertainment websites
+.9gag.com
+.reddit.com
+.twitch.tv
+
+# Gaming platforms
+.steam.com
+.epicgames.com
+.battle.net
+
+# Torrent and file sharing
+.thepiratebay.org
+.kickass.to
+.1337x.to
+.rutracker.org
+
+# Malicious or suspicious domains
+.malware-example.com
+.phishing-site.com

@@ -1,0 +1,34 @@
+# Allowed domains whitelist (always permitted)
+# =============================================
+
+# Search engines
+.google.com
+.yandex.ru
+.bing.com
+
+# Official news sources
+.bbc.com
+.cnn.com
+.reuters.com
+
+# Educational resources
+.wikipedia.org
+.coursera.org
+.edx.org
+.khanacademy.org
+
+# Business resources
+.linkedin.com
+.microsoft.com
+.office.com
+.outlook.com
+
+# Banking and finance
+.sberbank.ru
+.kaspi.kz
+.halykbank.kz
+
+# Government websites
+.gov.kz
+.egov.kz
+.adilet.zan.kz
