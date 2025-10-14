@@ -1,0 +1,8 @@
+application/vnd.adobe.flash-movie
+application/x-shockwave-flash
+application/ogg
+application/ogg; codecs=bogus
+application/mp4
+application/mp4; codecs=bogus
+application/octet-stream
+application/octet-stream; codecs=bogus

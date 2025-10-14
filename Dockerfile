@@ -1,4 +1,7 @@
-FROM debian:12-slim as builder
+##############################################
+# STAGE 1: BUILD SQUID FROM SOURCE
+##############################################
+FROM debian:12-slim AS builder
 
 ARG SQUID_VER=6.13
 ARG DEBIAN_FRONTEND=noninteractive
@@ -15,18 +18,20 @@ RUN apt-get update && \
         libldap2-dev \
         libkrb5-dev \
         libsasl2-dev \
+        libsasl2-modules-gssapi-mit \
+        ldap-utils \
         build-essential \
         wget && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/build
 
-# Download and extract Squid source code
+# Download and extract Squid source
 RUN SQUID_TAG=$(echo "$SQUID_VER" | tr "." "_") && \
     curl -fSsL "https://github.com/squid-cache/squid/releases/download/SQUID_$SQUID_TAG/squid-${SQUID_VER}.tar.gz" -o squid.tar.gz && \
     tar --strip 1 -xzf squid.tar.gz
 
-# Configure and build Squid with SSL bump, LDAP, and Kerberos support
+# Configure and build Squid with SSL, LDAP, and Kerberos support
 RUN CFLAGS="-O2 -g0" CXXFLAGS="-O2 -g0" LDFLAGS="-s" \
     ./configure \
         --prefix=/usr/local/squid \
@@ -50,12 +55,17 @@ RUN CFLAGS="-O2 -g0" CXXFLAGS="-O2 -g0" LDFLAGS="-s" \
     make -j$(nproc) && \
     make install
 
-# Final production image
+
+##############################################
+# STAGE 2: RUNTIME IMAGE
+##############################################
 FROM debian:12-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Qyzylorda
+ENV PATH="/usr/local/squid/sbin:/usr/local/squid/bin:$PATH"
 
-# Install ONLY runtime dependencies (?????????????????????? ???????????????? ???????????????????? ?????????? 4)
+# Install runtime dependencies (include SASL + LDAP)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libssl3 \
@@ -65,33 +75,33 @@ RUN apt-get update && \
         libk5crypto3 \
         libkrb5support0 \
         libsasl2-2 \
+        libsasl2-modules-gssapi-mit \
+        ldap-utils \
         ca-certificates \
         tzdata && \
     rm -rf /var/lib/apt/lists/*
 
-# Set timezone to Asia/Qyzylorda as specified in technical requirements
-ENV TZ=Asia/Qyzylorda
+# Set timezone
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Create necessary directories with proper permissions
-RUN mkdir -p /var/cache/squid /var/log/squid /var/run/squid /etc/squid /etc/squid/ssl_cert && \
+# Create required directories
+RUN mkdir -p /var/cache/squid /var/log/squid /var/run/squid /etc/squid/ssl_cert && \
     chown -R proxy:proxy /var/cache/squid /var/log/squid /var/run/squid
 
-# Copy Squid binaries and configuration from builder stage
+# Copy built Squid binaries and configs
 COPY --from=builder /usr/local/squid/ /usr/local/squid/
 COPY --from=builder /etc/squid/ /etc/squid/
 
-# Set proper permissions
-RUN chown -R root:root /usr/local/squid/ && \
-    chmod +x /usr/local/squid/sbin/squid
+# Verify SASL GSSAPI module presence (diagnostic)
+RUN ls -l /usr/lib/x86_64-linux-gnu/sasl2/libgssapiv2.so || echo "❌ SASL GSSAPI module not found"
 
-# Add entrypoint script for time synchronization and initialization
+# Copy and enable entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose Squid port
 EXPOSE 3128
 
-# Use custom entrypoint
+# Set entrypoint and command
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/usr/local/squid/sbin/squid", "-f", "/etc/squid/squid.conf", "-N"]
+CMD ["squid", "-f", "/etc/squid/squid.conf", "-N"]

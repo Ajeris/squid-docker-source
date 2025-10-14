@@ -1,21 +1,17 @@
 services:
   squid:
-    image: squid-minimal:6.12
+    image: squid-minimal-q:1.2
     
     container_name: squid-proxy
     
     restart: unless-stopped
     
-    # Macvlan provides direct network access for proper Active Directory authentication
-    # Squid accessible directly at 192.168.10.22:3128
-    
     volumes:
       # Configuration files
-      - ./config:/etc/squid/config:ro
-      - ./config/squid.conf:/etc/squid/squid.conf:ro
+      - ./config:/etc/squid:rw
       
-      # SSL certificates for HTTPS traffic decryption
-      - ./config/ssl_cert:/etc/squid/ssl_cert:ro
+      # Kerberos configuration
+      - ./config/krb5.conf:/etc/krb5.conf:ro
       
       # Logs (persistent, readable by external programs)
       - ./logs:/var/log/squid
@@ -28,31 +24,19 @@ services:
       
     environment:
       - TZ=Asia/Qyzylorda
-      - SQUID_CONFIG_FILE=/etc/squid/squid.conf
-      # Set NTP server for AD time synchronization (replace with your AD server)
-      # - NTP_SERVER=192.168.10.1  # Configure your AD server IP
-      
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '1.0'
-        reservations:
-          memory: 256M
-          cpus: '0.25'
+      - KRB5_CONFIG=/etc/krb5.conf
+      - KRB5_KTNAME=/etc/squid/squid.keytab
+
+    #deploy:
+    #  resources:
+    #    limits:
+    #      cpus: "2.0"         # максимум 2 ядра
+    #      memory: 2G          # максимум 2 гигабайта оперативки
+    #    reservations:
+    #      cpus: "0.5"         # резервируем 0.5 CPU
+    #      memory: 512M        # гарантированный минимум памяти
     
-    # Health check to ensure Squid is running properly
-#    healthcheck:
-#      test: [
-#        "CMD-SHELL", 
-#        "pgrep squid || exit 1"
-#      ]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 3
-#      start_period: 60s
-    
-    # Logging configuration with rotation (handles log rotation as per tech requirements)
+    # Logging configuration with rotation
     logging:
       driver: "json-file"
       options:
@@ -63,21 +47,17 @@ services:
     networks:
       squid-macvlan:
         ipv4_address: 192.168.10.22
+    #dns:
+    #  - 192.168.10.2
+    #  - 192.168.10.7   
 
 networks:
   squid-macvlan:
     driver: macvlan
     driver_opts:
-      parent: eth0  # Replace with your actual network interface
+      parent: eth0
     ipam:
       config:
         - subnet: 192.168.10.0/23
           gateway: 192.168.10.1
           ip_range: 192.168.10.22/32
-
-# Optional: Add volumes for persistent data
-volumes:
-  squid_logs:
-    driver: local
-  squid_cache:
-    driver: local
