@@ -16,6 +16,6 @@ logs/
 *.deb
 
 #Certs
-#*.crt
-#*.key
-#*.keytab 
+*.crt
+*.key
+*.keytab 
