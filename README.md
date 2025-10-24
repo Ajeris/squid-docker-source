@@ -1,124 +1,125 @@
-# Squid 6.12 Docker Container
+Squid 6.12 Docker Container
 
-Optimized Docker container for Squid Proxy Server version 6.12 built on Debian 12-slim with SSL bump, LDAP, and Kerberos authentication support.
+Optimized Docker container for Squid Proxy Server 6.12 built on Debian 12-slim with SSL bump, LDAP, and Kerberos authentication support.
 
-[![Docker Build](https://img.shields.io/badge/docker-build-blue.svg)](https://docker.com)
-[![Squid Version](https://img.shields.io/badge/squid-6.12-green.svg)](http://www.squid-cache.org/)
-[![Debian](https://img.shields.io/badge/debian-12--slim-red.svg)](https://debian.org)
 
-## ???? Features
+Features
 
-- **Squid 6.12** - Latest stable release with security patches
-- **SSL Bump** - HTTPS traffic interception and inspection capabilities
-- **LDAP Authentication** - Active Directory/LDAP integration for user authentication
-- **Kerberos Authentication** - Single Sign-On (SSO) authentication support
-- **SNMP Monitoring** - Built-in proxy status monitoring and statistics
-- **Log Rotation** - Automatic log rotation with compression
-- **Minimal Size** - Optimized build with removed unnecessary dependencies
-- **Timezone Support** - Configured for Asia/Qyzylorda timezone
-- **AD Time Sync** - Automatic time synchronization with Active Directory
+    Squid 6.12 — stable release with security updates
 
-## ???? Requirements
+    SSL Bump — HTTPS interception and inspection
 
-- Docker Engine 20.10+
-- Docker Compose 2.0+
-- Network interface for macvlan configuration
-- Active Directory server (for authentication)
+    LDAP Authentication — Active Directory / LDAP integration
 
-## ??????? Quick Start
+    Kerberos Authentication — Single Sign-On (SSO) support
 
-### 1. Clone Repository
+    SNMP Monitoring — proxy monitoring and statistics
 
-```bash
-# Build and start the container (first time setup)
+    Log Rotation — automatic rotation with compression
+
+    Minimal Image Size — optimized build with unnecessary packages removed
+
+    Timezone Support — configurable (example: Asia/Qyzylorda)
+
+    AD Time Sync — optional time synchronization with Active Directory
+
+Requirements
+
+    Docker Engine 20.10+
+
+    Docker Compose 2.0+ (or docker compose v2)
+
+    Network interface for macvlan (optional, depending on topology)
+
+    Active Directory or LDAP server (for authentication features)
+
+Quick Start
+1. Clone repository
+git clone <repository-url>
+cd <repository-directory>
+2. Build and start (first-time build)
+# Build and start using the build compose file
 docker compose -f docker-compose.build.yml up -d --build
 
-# OR use pre-built image
+# Or start using pre-built image
 docker compose up -d
 
 # Check container status
 docker compose ps
 
-# View logs
+# Follow logs
 docker compose logs -f
-```
-
-## ???? Directory Structure
-
-```
+Directory structure (example)
 squid_docker/
-????????? Dockerfile              # Container build configuration
-????????? docker-compose.yml      # Container orchestration
-????????? entrypoint.sh           # Container initialization script
-????????? setup_project.sh        # Project setup and SSL certificate generation
-????????? setup_project.sh    # Directory structure setup script
-????????? config/                 # Configuration files
-???   ????????? squid.conf          # Main Squid configuration
-???   ????????? ssl_cert/           # SSL certificates
-???   ????????? acl/               # Access control lists
-????????? logs/                   # Squid log files (excluded from git)
-????????? cache/                  # Squid cache files (excluded from git)
-????????? README.md              # This file
-```
+├── Dockerfile                # Container build configuration
+├── docker-compose.yml        # Container orchestration
+├── docker-compose.build.yml  # Optional: build-time compose file
+├── entrypoint.sh             # Container initialization script
+├── setup_project.sh          # Project setup and SSL certificate generation
+├── config/                   # Configuration files
+│   ├── squid.conf            # Main Squid configuration
+│   ├── ssl_cert/             # SSL certificates (CA & keys)
+│   └── acl/                  # Access control lists and rules
+├── logs/                     # Squid log files (commonly excluded from VCS)
+├── cache/                    # Squid cache files (commonly excluded from VCS)
+└── README.md                 # This file
+Configuration
+Main configuration file
 
-## ?????? Configuration
+The main Squid configuration is located at config/squid.conf. Key points:
 
-### Main Configuration File
+    HTTP Proxy Port: 3128 (example) with SSL bump enabled
 
-The main Squid configuration is located at `config/squid.conf`. Key features:
+    SSL Certificate: auto-generated or user-provided certificates for HTTPS inspection
 
-- **HTTP Port**: 3128 with SSL bump enabled
-- **SSL Certificate**: Auto-generated certificates for HTTPS inspection
-- **Authentication**: LDAP and Kerberos support
-- **Access Control**: Flexible ACL system
+    Authentication: LDAP and Kerberos helpers are supported and configurable
 
-### Docker Compose Configuration
+    Access Control: ACLs are used to define who can access the Internet and how
 
-- **Macvlan Network**: Direct network access for AD authentication
-- **Volume Mounts**: Persistent logs and cache storage
-- **Environment Variables**: Timezone and NTP configuration
-- **Health Checks**: Automatic container health monitoring
+Docker Compose details
 
-### Log Configuration
+    Network: macvlan is supported for direct network access (useful for AD integration); bridge mode also works depending on your network
 
-- **Access Logs**: `/var/log/squid/access.log`
-- **Cache Logs**: `/var/log/squid/cache.log`  
-- **Log Rotation**: Daily rotation with 7-day retention
-- **External Access**: Logs are readable by external monitoring tools
+    Volumes: persistent storage for logs and cache
 
-## ???? Advanced Usage
+    Environment variables: timezone and NTP settings can be passed via environment:
 
-### Custom Configuration
+    Healthchecks: container-level health monitoring to restart unhealthy containers
 
-```bash
-# Build and start the container (first time setup)
+Logs
+
+    Access log: /var/log/squid/access.log
+
+    Cache log: /var/log/squid/cache.log
+
+    Log rotation: daily rotation with configurable retention (example: 7 days)
+
+    Ensure logs are accessible to external monitoring tools if required
+
+Advanced usage
+
+You can provide custom configuration or additional helpers by mounting files into the config/ directory or extending the Dockerfile.
+# Rebuild after changes
 docker compose -f docker-compose.build.yml up -d --build
+License
 
-# OR use pre-built image
-docker compose up -d
-```
+This project is licensed under the MIT License — see the LICENSE file for details.
+Contributing
 
-## ???? License
+    Fork the repository
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+    Create a feature branch
 
-## ???? Contributing
+    Make your changes
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+    Test thoroughly
 
-## ???? Support
+    Submit a pull request
 
-For issues and questions:
+Support / Troubleshooting
 
-1. Check the troubleshooting section
-2. Review container logs
-3. Open an issue on GitHub
-4. Provide detailed error information and configuration
+    Check the troubleshooting section in this repository (if present)
 
----
+    Inspect container logs (docker compose logs -f)
 
-**Note**: This container is optimized for Active Directory environments and requires proper network configuration for authentication to work correctly.
+    Open an issue on GitHub with detailed information: logs, config snippets, environment
