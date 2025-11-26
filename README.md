@@ -6,7 +6,7 @@ Optimized Docker container for Squid Proxy Server version 6.12 built on Debian 1
 [![Squid Version](https://img.shields.io/badge/squid-6.12-green.svg)](http://www.squid-cache.org/)
 [![Debian](https://img.shields.io/badge/debian-12--slim-red.svg)](https://debian.org)
 
-## ???? Features
+## ✨ Features
 
 - **Squid 6.12** - Latest stable release with security patches
 - **SSL Bump** - HTTPS traffic interception and inspection capabilities
@@ -18,14 +18,14 @@ Optimized Docker container for Squid Proxy Server version 6.12 built on Debian 1
 - **Timezone Support** - Configured for Asia/Qyzylorda timezone
 - **AD Time Sync** - Automatic time synchronization with Active Directory
 
-## ???? Requirements
+## 📋 Requirements
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 - Network interface for macvlan configuration
 - Active Directory server (for authentication)
 
-## ??????? Quick Start
+## 🚀 Quick Start
 
 ### 1. Clone Repository
 
@@ -43,7 +43,7 @@ docker compose ps
 docker compose logs -f
 ```
 
-## ???? Directory Structure
+## 📁 Directory Structure
 
 ```
 squid_docker/
@@ -61,7 +61,7 @@ squid_docker/
 ????????? README.md              # This file
 ```
 
-## ?????? Configuration
+## ⚙️ Configuration
 
 ### Main Configuration File
 
@@ -86,7 +86,7 @@ The main Squid configuration is located at `config/squid.conf`. Key features:
 - **Log Rotation**: Daily rotation with 7-day retention
 - **External Access**: Logs are readable by external monitoring tools
 
-## ???? Advanced Usage
+## 🔧 Advanced Usage
 
 ### Custom Configuration
 
@@ -98,11 +98,11 @@ docker compose -f docker-compose.build.yml up -d --build
 docker compose up -d
 ```
 
-## ???? License
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## ???? Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -110,7 +110,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 4. Test thoroughly
 5. Submit a pull request
 
-## ???? Support
+## 💬 Support
 
 For issues and questions:
 
