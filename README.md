@@ -46,19 +46,17 @@ docker compose logs -f
 ## 📁 Directory Structure
 
 ```
-squid_docker/
-????????? Dockerfile              # Container build configuration
-????????? docker-compose.yml      # Container orchestration
-????????? entrypoint.sh           # Container initialization script
-????????? setup_project.sh        # Project setup and SSL certificate generation
-????????? setup_project.sh    # Directory structure setup script
-????????? config/                 # Configuration files
-???   ????????? squid.conf          # Main Squid configuration
-???   ????????? ssl_cert/           # SSL certificates
-???   ????????? acl/               # Access control lists
-????????? logs/                   # Squid log files (excluded from git)
-????????? cache/                  # Squid cache files (excluded from git)
-????????? README.md              # This file
+├── Dockerfile # Container build configuration
+├── docker-compose.yml # Container orchestration
+├── entrypoint.sh # Container initialization script
+├── setup_project.sh # Project setup and SSL certificate generation
+├── structure_setup.sh # Directory structure setup script
+├── config/ # Configuration files
+│ ├── squid.conf # Main Squid configuration
+│ ├── ssl_cert/ # SSL certificates
+│ └── acl/ # Access control lists
+├── logs/ # Squid log files (excluded from git)
+├── cache/ # Squid cach
 ```
 
 ## ⚙️ Configuration
