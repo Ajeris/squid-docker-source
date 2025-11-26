@@ -1,151 +1,92 @@
-Squid 6.12 Docker Container
+# Squid 6.12 Docker Container
 
-Optimized Docker container for Squid Proxy Server v6.12 based on Debian 12-slim with SSL Bump, LDAP, and Kerberos authentication support.
+Optimized Docker container for Squid Proxy Server v6.12 based on Debian
+12-slim with SSL Bump, LDAP, and Kerberos authentication support.
 
-Docker Build badge: https://img.shields.io/badge/docker-build-blue.svg
+[![Docker
+Build](https://img.shields.io/badge/docker-build-blue.svg)](https://docker.com)
+[![Squid
+Version](https://img.shields.io/badge/squid-6.12-green.svg)](http://www.squid-cache.org/)
+[![Debian](https://img.shields.io/badge/debian-12--slim-red.svg)](https://debian.org)
 
+## Features
 
-Squid Version badge: https://img.shields.io/badge/squid-6.12-green.svg
+-   Squid 6.12 --- Latest stable release with security updates
+-   SSL Bump --- HTTPS traffic interception and inspection
+-   LDAP Authentication --- Integration with Active Directory / LDAP
+-   Kerberos Authentication --- SSO (Single Sign-On) support
+-   SNMP Monitoring --- Proxy status and statistics monitoring
+-   Log Rotation --- Automatic log rotation with compression
+-   Minimal Image Size --- Optimized build with unnecessary packages
+    removed
+-   Timezone Support --- Configured for Asia/Qyzylorda
+-   AD Time Sync --- Automatic time synchronization with Active
+    Directory
 
-Debian badge: https://img.shields.io/badge/debian-12--slim-red.svg
+## Requirements
 
-Features:
+-   Docker Engine 20.10+
+-   Docker Compose 2.0+
+-   Network with macvlan support
+-   Active Directory server
 
-Squid 6.12 — Latest stable release with security updates
+## Quick Start
 
-SSL Bump — HTTPS traffic interception and inspection
+### Clone repository
 
-LDAP Authentication — Integration with Active Directory / LDAP
+\`\`\`bash git clone `<repo-url>`{=html} cd `<repo-dir>`{=html} \`\`\`
 
-Kerberos Authentication — SSO (Single Sign-On) support
+### Build and start
 
-SNMP Monitoring — Proxy status and statistics monitoring
+\`\`\`bash docker compose -f docker-compose.build.yml up -d --build \#
+or docker compose up -d \`\`\`
 
-Log Rotation — Automatic log rotation with compression
+### Logs
 
-Minimal Image Size — Optimized build with unnecessary packages removed
+\`\`\`bash docker compose logs -f \`\`\`
 
-Timezone Support — Configured for Asia/Qyzylorda
+## Directory Structure
 
-AD Time Sync — Automatic time synchronization with Active Directory
+\`\`\` squid_docker/ ├── Dockerfile ├── docker-compose.yml ├──
+docker-compose.build.yml ├── entrypoint.sh ├── setup_project.sh ├──
+structure_setup.sh ├── config/ │ ├── squid.conf │ ├── ssl_cert/ │ └──
+acl/ ├── logs/ ├── cache/ └── README.md \`\`\`
 
-Requirements:
+## Configuration
 
-Docker Engine 20.10+
+### Main config: config/squid.conf
 
-Docker Compose 2.0+
+-   Port 3128 with SSL Bump
+-   SSL certificates
+-   LDAP + Kerberos authentication
+-   ACL rules
 
-Network with macvlan support
+### Compose configuration
 
-Active Directory server (for authentication)
+-   Macvlan network
+-   Persistent logs & cache
+-   Timezone & NTP
+-   Health checks
 
-Quick Start:
+### Logs
 
-Clone the repository:
-git clone <repo-url>
-cd <repo-dir>
+-   /var/log/squid/access.log
+-   /var/log/squid/cache.log
 
-Build and start (first-time setup):
-docker compose -f docker-compose.build.yml up -d --build
+## License
 
-Or start using pre-built image:
-docker compose up -d
+MIT License
 
-Check container status:
-docker compose ps
+## Contributing
 
-View logs:
-docker compose logs -f
+1.  Fork repo
+2.  Create feature branch
+3.  Commit changes
+4.  Test
+5.  PR
 
-Directory Structure:
+## Support
 
-squid_docker/
-├── Dockerfile — Container build configuration
-├── docker-compose.yml — Container orchestration
-├── docker-compose.build.yml — Build/CI configuration (optional)
-├── entrypoint.sh — Container initialization script
-├── setup_project.sh — Project setup and SSL certificate generation
-├── structure_setup.sh — Directory structure creation script (optional)
-├── config/ — Configuration files
-│ ├── squid.conf — Main Squid configuration
-│ ├── ssl_cert/ — SSL certificates
-│ └── acl/ — Access control lists
-├── logs/ — Squid log files (excluded from git)
-├── cache/ — Squid cache (excluded from git)
-└── README.md — This file
-
-Configuration:
-
-Main configuration file: config/squid.conf
-
-Includes:
-
-HTTP port (default 3128) with SSL Bump
-
-SSL certificates (auto-generated if needed)
-
-LDAP and Kerberos authentication
-
-ACL rules for access control
-
-Docker Compose configuration:
-
-Macvlan network for direct AD connectivity
-
-Persistent storage for logs and cache
-
-Environment variables for timezone and NTP configuration
-
-Health checks for container monitoring
-
-Logging paths:
-Access log: /var/log/squid/access.log
-Cache log: /var/log/squid/cache.log
-Daily log rotation enabled
-Logs can be accessed by external monitoring tools
-
-Advanced Usage:
-
-Rebuild the container:
-docker compose -f docker-compose.build.yml up -d --build
-or
-docker compose up -d
-
-Customize configuration:
-
-Edit config/squid.conf
-
-Place SSL certificates in config/ssl_cert/
-
-Modify macvlan settings for AD/Kerberos
-
-License:
-This project is licensed under the MIT License.
-
-Contributing:
-
-Fork the repository
-
-Create a feature branch
-
-Make your changes
-
-Test locally
-
-Submit a pull request
-
-Support:
-
-Check troubleshooting documentation
-
-Review logs using "docker compose logs"
-
-Open an issue on GitHub
-
-Provide error details, logs, and configuration if reporting a problem
-
-Note:
-This container is optimized for Active Directory environments and requires correct network settings for authentication to function properly.
----
-
-**Note**: This container is optimized for Active Directory environments and requires proper network configuration for authentication to work correctly.
+-   Check troubleshooting
+-   docker compose logs
+-   Open GitHub issue
